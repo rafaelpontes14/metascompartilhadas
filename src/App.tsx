@@ -9,8 +9,9 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { Keyboard } from '@capacitor/keyboard';
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
 
-function App() {
+const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [metas, setMetas] = useState<Meta[]>([]);
   const [modalAberto, setModalAberto] = useState(false);
@@ -21,27 +22,62 @@ function App() {
   });
 
   useEffect(() => {
-    // Configurar StatusBar
-    StatusBar.setBackgroundColor({ color: '#ffffff' });
-    StatusBar.setStyle({ style: Style.Dark });
+    const setupCapacitor = async () => {
+      const platform = Capacitor.getPlatform();
+      const isNative = platform !== 'web';
+      
+      if (isNative) {
+        try {
+          // Configurar StatusBar
+          if (StatusBar && typeof StatusBar.setBackgroundColor === 'function') {
+            try {
+              await StatusBar.setBackgroundColor({ color: '#ffffff' });
+              await StatusBar.setStyle({ style: Style.Dark });
+            } catch (error) {
+              console.warn(`StatusBar não está disponível na plataforma ${platform}:`, error);
+            }
+          }
 
-    // Configurar teclado
-    Keyboard.addListener('keyboardWillShow', () => {
-      document.body.classList.add('keyboard-open');
-    });
+          // Configurar teclado
+          if (Keyboard && typeof Keyboard.addListener === 'function') {
+            try {
+              await Keyboard.addListener('keyboardWillShow', () => {
+                document.body.classList.add('keyboard-open');
+              });
 
-    Keyboard.addListener('keyboardWillHide', () => {
-      document.body.classList.remove('keyboard-open');
-    });
+              await Keyboard.addListener('keyboardWillHide', () => {
+                document.body.classList.remove('keyboard-open');
+              });
+            } catch (error) {
+              console.warn(`Keyboard não está disponível na plataforma ${platform}:`, error);
+            }
+          }
 
-    // Configurar botão voltar do Android
-    CapacitorApp.addListener('backButton', ({ canGoBack }) => {
-      if (canGoBack) {
-        window.history.back();
+          // Configurar botão voltar do Android
+          if (CapacitorApp && typeof CapacitorApp.addListener === 'function') {
+            try {
+              await CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+                if (canGoBack) {
+                  window.history.back();
+                } else {
+                  CapacitorApp.exitApp();
+                }
+              });
+            } catch (error) {
+              console.warn(`CapacitorApp não está disponível na plataforma ${platform}:`, error);
+            }
+          }
+        } catch (error) {
+          console.warn(`Erro ao configurar plugins do Capacitor na plataforma ${platform}:`, error);
+        }
       } else {
-        CapacitorApp.exitApp();
+        // Configurações específicas para web
+        document.body.style.backgroundColor = '#ffffff';
+        console.log('Aplicativo rodando no ambiente web - usando configurações web nativas');
       }
-    });
+    };
+
+    setupCapacitor();
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -61,8 +97,26 @@ function App() {
 
     return () => {
       subscription.unsubscribe();
-      Keyboard.removeAllListeners();
-      CapacitorApp.removeAllListeners();
+      if (Capacitor.isNativePlatform()) {
+        try {
+          if (Keyboard && typeof Keyboard.removeAllListeners === 'function') {
+            try {
+              Keyboard.removeAllListeners();
+            } catch (error) {
+              console.warn('Error removing Keyboard listeners:', error);
+            }
+          }
+          if (CapacitorApp && typeof CapacitorApp.removeAllListeners === 'function') {
+            try {
+              CapacitorApp.removeAllListeners();
+            } catch (error) {
+              console.warn('Error removing CapacitorApp listeners:', error);
+            }
+          }
+        } catch (error) {
+          console.warn('Error cleaning up Capacitor plugins:', error);
+        }
+      }
     };
   }, []);
 
@@ -423,6 +477,6 @@ function App() {
       <InstallPWA />
     </div>
   );
-}
+};
 
 export default App;
