@@ -2,9 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Estilos para mobile */
 @layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
   body {
-    @apply text-gray-900 bg-gray-50;
+    @apply antialiased;
+    overscroll-behavior-y: none;
+  }
+}
+
+/* Ajustes para teclado */
+.keyboard-open {
+  height: 100vh;
+  position: fixed;
+  width: 100%;
+  overflow-y: auto;
+}
+
+/* Melhorias de toque */
+@media (hover: none) {
+  .touch-feedback {
+    @apply active:opacity-70;
+  }
+  
+  button, a {
+    @apply touch-feedback;
+  }
+}
+
+/* Ajustes de scroll */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ajustes de modal para mobile */
+.modal-content {
+  @apply max-h-[90vh] overflow-y-auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ajustes de input para mobile */
+input, textarea, select {
+  @apply text-base;
+  font-size: 16px; /* Previne zoom em iOS */
+}
+
+/* Ajustes de botão para mobile */
+button {
+  @apply min-h-[44px] min-w-[44px]; /* Tamanho mínimo recomendado para toque */
+}
+
+/* Ajustes de layout para mobile */
+@media (max-width: 640px) {
+  .grid {
+    @apply gap-3;
+  }
+  
+  .card {
+    @apply p-4;
   }
 }
 

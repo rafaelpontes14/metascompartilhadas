@@ -3,7 +3,12 @@ import { Target, Plane, Wallet, Brain, Plus, Edit2, Trash2, X } from 'lucide-rea
 import type { Meta } from './types';
 import { supabase } from './lib/supabase';
 import { Auth } from './components/Auth';
+import { InstallPWA } from './components/InstallPWA';
 import { Session } from '@supabase/supabase-js';
+import { App as CapacitorApp } from '@capacitor/app';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { Keyboard } from '@capacitor/keyboard';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -16,6 +21,28 @@ function App() {
   });
 
   useEffect(() => {
+    // Configurar StatusBar
+    StatusBar.setBackgroundColor({ color: '#ffffff' });
+    StatusBar.setStyle({ style: Style.Dark });
+
+    // Configurar teclado
+    Keyboard.addListener('keyboardWillShow', () => {
+      document.body.classList.add('keyboard-open');
+    });
+
+    Keyboard.addListener('keyboardWillHide', () => {
+      document.body.classList.remove('keyboard-open');
+    });
+
+    // Configurar botão voltar do Android
+    CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+      if (canGoBack) {
+        window.history.back();
+      } else {
+        CapacitorApp.exitApp();
+      }
+    });
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
@@ -32,7 +59,11 @@ function App() {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      Keyboard.removeAllListeners();
+      CapacitorApp.removeAllListeners();
+    };
   }, []);
 
   useEffect(() => {
@@ -85,7 +116,8 @@ function App() {
     }
   };
 
-  const abrirModal = (meta?: Meta) => {
+  const abrirModal = async (meta?: Meta) => {
+    await Haptics.impact({ style: ImpactStyle.Light });
     if (meta) {
       setMetaEmEdicao(meta);
       setNovaMetaForm(meta);
@@ -103,7 +135,8 @@ function App() {
     setModalAberto(true);
   };
 
-  const fecharModal = () => {
+  const fecharModal = async () => {
+    await Haptics.impact({ style: ImpactStyle.Light });
     setModalAberto(false);
     setMetaEmEdicao(null);
     setNovaMetaForm({
@@ -122,6 +155,7 @@ function App() {
 
   const salvarMeta = async (e: React.FormEvent) => {
     e.preventDefault();
+    await Haptics.impact({ style: ImpactStyle.Medium });
     
     if (!session?.user?.id) return;
 
@@ -155,6 +189,7 @@ function App() {
   };
 
   const excluirMeta = async (id: string) => {
+    await Haptics.impact({ style: ImpactStyle.Heavy });
     if (confirm('Tem certeza que deseja excluir esta meta?')) {
       try {
         const { error } = await supabase
@@ -384,6 +419,8 @@ function App() {
           </div>
         </div>
       )}
+
+      <InstallPWA />
     </div>
   );
 }
