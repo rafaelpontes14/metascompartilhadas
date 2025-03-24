@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-icons.js && vite build",
+    "build": "npm run check-env && node scripts/generate-icons.js && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check-env": "node scripts/check-env.js"
   },
   "dependencies": {
     "@capacitor/android": "^7.1.0",
