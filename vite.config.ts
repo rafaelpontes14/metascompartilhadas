@@ -6,6 +6,14 @@ import { resolve } from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
+  // Validação das variáveis de ambiente
+  if (!env.VITE_SUPABASE_URL) {
+    throw new Error('VITE_SUPABASE_URL não está definida');
+  }
+  if (!env.VITE_SUPABASE_ANON_KEY) {
+    throw new Error('VITE_SUPABASE_ANON_KEY não está definida');
+  }
+  
   return {
     plugins: [react()],
     resolve: {
@@ -31,7 +39,7 @@ export default defineConfig(({ mode }) => {
           entryFileNames: 'assets/[name]-[hash].js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name === 'icon.svg') {
-              return 'assets/icon.svg';
+              return 'icon.svg';
             }
             return 'assets/[name]-[hash].[ext]';
           },
