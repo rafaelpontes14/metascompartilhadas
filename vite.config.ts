@@ -6,12 +6,16 @@ import { resolve } from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
+  // Log das variáveis de ambiente (sem mostrar valores sensíveis)
+  console.log('Ambiente:', mode);
+  console.log('Variáveis de ambiente disponíveis:', Object.keys(env).filter(key => key.startsWith('VITE_')));
+  
   // Validação das variáveis de ambiente
   if (!env.VITE_SUPABASE_URL) {
-    throw new Error('VITE_SUPABASE_URL não está definida');
+    throw new Error('VITE_SUPABASE_URL não está definida. Verifique o arquivo .env ou as variáveis de ambiente do Netlify.');
   }
   if (!env.VITE_SUPABASE_ANON_KEY) {
-    throw new Error('VITE_SUPABASE_ANON_KEY não está definida');
+    throw new Error('VITE_SUPABASE_ANON_KEY não está definida. Verifique o arquivo .env ou as variáveis de ambiente do Netlify.');
   }
   
   return {

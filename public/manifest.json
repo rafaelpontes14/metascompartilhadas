@@ -23,5 +23,7 @@
   "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "screenshots": [],
   "shortcuts": [],
-  "display_override": ["window-controls-overlay"]
+  "display_override": ["window-controls-overlay"],
+  "icons_192": "/icon.svg",
+  "icons_512": "/icon.svg"
 } 
