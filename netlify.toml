@@ -28,7 +28,12 @@
 [build.processing.images]
   compress = true
 
-# Configuração de ambiente para o runtime
+# Variáveis de ambiente para o runtime
 [context.production.environment]
+  VITE_SUPABASE_URL = "https://azcntowviplnhuzsxlku.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6Y250b3d2aXBsbmh1enN4bGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzODc4NjIsImV4cCI6MjA1Nzk2Mzg2Mn0.Ei0__y1M2DzazR41TBRpAnJ3gy_HQyK3eIuiXVqiFtU"
+
+# Variáveis de ambiente para o deploy
+[context.deploy-preview.environment]
   VITE_SUPABASE_URL = "https://azcntowviplnhuzsxlku.supabase.co"
   VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6Y250b3d2aXBsbmh1enN4bGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzODc4NjIsImV4cCI6MjA1Nzk2Mzg2Mn0.Ei0__y1M2DzazR41TBRpAnJ3gy_HQyK3eIuiXVqiFtU" 
