@@ -5,23 +5,14 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
 
 [build.environment]
   VITE_SUPABASE_URL = "https://azcntowviplnhuzsxlku.supabase.co"
   VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6Y250b3d2aXBsbmh1enN4bGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzODc4NjIsImV4cCI6MjA1Nzk2Mzg2Mn0.Ei0__y1M2DzazR41TBRpAnJ3gy_HQyK3eIuiXVqiFtU"
 
-# Otimizações de build
 [build.processing]
   skip_processing = false
-  css = { bundle = true, minify = true }
-  js = { bundle = true, minify = true }
-  images = { compress = true }
-  html = { pretty_urls = true }
-
-# Cache de build
-[build.processing.html]
-  pretty_urls = true
 
 [build.processing.css]
   bundle = true
@@ -30,6 +21,9 @@
 [build.processing.js]
   bundle = true
   minify = true
+
+[build.processing.html]
+  pretty_urls = true
 
 [build.processing.images]
   compress = true 
