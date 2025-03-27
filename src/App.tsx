@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Plane, Wallet, Brain, Plus, Edit2, Trash2, X } from 'lucide-react';
+import { Target, Plane, Wallet, Brain, Plus, Edit2, Trash2, X, Sun, Moon } from 'lucide-react';
 import type { Meta } from './types';
 import { supabase } from './lib/supabase';
 import { Auth } from './components/Auth';
@@ -20,6 +20,18 @@ const App: React.FC = () => {
     categoria: 'pessoal',
     progresso: 0
   });
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    document.body.classList.toggle('dark', darkMode);
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
+  const toggleTheme = () => {
+    setDarkMode((prev) => !prev);
+  };
 
   useEffect(() => {
     const setupCapacitor = async () => {
@@ -265,13 +277,13 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-br from-blue-50 to-purple-50'}`}>
+      <header className={`bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10`}>
         <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center space-x-3">
-              <Target className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600" />
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Metas Compartilhadas</h1>
+              <Target className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600 dark:text-purple-400" />
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Metas Compartilhadas</h1>
             </div>
             <div className="flex items-center space-x-4">
               <button 
@@ -282,8 +294,14 @@ const App: React.FC = () => {
                 <span>Nova Meta</span>
               </button>
               <button
+                onClick={toggleTheme}
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white text-sm sm:text-base"
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+              <button
                 onClick={() => supabase.auth.signOut()}
-                className="text-gray-600 hover:text-gray-800 text-sm sm:text-base"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white text-sm sm:text-base"
               >
                 Sair
               </button>
@@ -352,7 +370,7 @@ const App: React.FC = () => {
 
       {modalAberto && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto`}>
             <div className="flex justify-between items-center p-4 sm:p-6 border-b sticky top-0 bg-white">
               <h2 className="text-lg sm:text-xl font-semibold">
                 {metaEmEdicao ? 'Editar Meta' : 'Nova Meta'}
